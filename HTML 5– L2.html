@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>HTML5-L2</title>
+	<script>
+		// Drag & Drop
+		function allowDrop(eve) {
+		    eve.preventDefault();
+		}
+
+		function drag(eve) {
+		    eve.dataTransfer.setData("data", eve.target.id);
+		}
+
+		function drop(eve) {
+		    eve.preventDefault();
+    		var data = eve.dataTransfer.getData("data");
+    		eve.target.appendChild(document.getElementById(data));
+		}
+
+		// Geolocation
+    	if (navigator.geolocation) {
+        	navigator.geolocation.getCurrentPosition(showPosition,showError);
+    	} else {
+        	showCoords.innerHTML = "Geolocation is not supported by your browser.";
+    	}
+		function showPosition(position) {
+			var showCoords = document.getElementById("para");
+			// Web Storage
+			if (typeof(Storage) !== "undefined") {
+				// If the user has visited this page before
+				if(localStorage.getItem("latitude") && localStorage.getItem("longitude")) {
+					showCoords.innerHTML = "<font color='blue'>Latitude: " + localStorage.getItem("latitude") + "<br>Longitude: " + localStorage.getItem("longitude")+"</font>";
+				}
+				else {
+					// If the user is visiting the page for the first time
+					localStorage.setItem("latitude",position.coords.latitude);
+	    			localStorage.setItem("longitude",position.coords.longitude);
+    				showCoords.innerHTML = "<font color='blue'>Latitude: " + localStorage.getItem("latitude") + "<br>Longitude: " + localStorage.getItem("longitude"+"</font>");
+				}
+			} else {
+    			showCoords.innerHTML = "Sorry, your browser does not support Web Storage!";
+    		}
+		}
+		//error handling
+		function showError(error) {
+		    switch(error.code) {
+	    	    case error.PERMISSION_DENIED:
+        		    showCoords.innerHTML = "Request for Geolocation denied."
+        	    	break;
+        	    case error.TIMEOUT:
+    		        showCoords.innerHTML = "User location request timed out."
+    	    	    break;
+		        case error.POSITION_UNAVAILABLE:
+	    	        showCoords.innerHTML = "Location not available."
+        	    	break;
+		        case error.UNKNOWN_ERROR:
+    	        	showCoords.innerHTML = "Unknown error occurred."
+        		    break;
+    		}
+    	}
+	</script>
+</head>
+<body>
+	<svg width="600" height="200">
+		<circle cx="100" cy="100" r="50" fill="yellow" ondrop="drop(event)" ondragover="allowDrop(event)"/>
+  		<circle cx="400" cy="100" r="50" fill="green" ondrop="drop(event)" ondragover="allowDrop(event)"/>
+	</svg>
+	<image id="logo" src="logo.gif" draggable="true" ondragstart="drag(event)" width="50" height="50">
+	<p id="para" style="font-family:courier; text-align:center; color:red;"></p>
+</body>
+</html>
